@@ -1,0 +1,6 @@
+ONGR\ElasticsearchBundle\Tests\app\fixture\Acme\BarBundle\Document\Person:
+    type: person
+    properties:
+        first_name:
+            type: string
+            name: first_name

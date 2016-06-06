@@ -25,9 +25,18 @@ services:
         arguments: ["%kernel.bundles%"]
         public: false
 
+    es.yaml_document_finder:
+        class: ONGR\ElasticsearchBundle\Mapping\Yaml\DocumentFinder
+        arguments: ["%kernel.bundles%"]
+        public: false
+
     es.document_parser:
         class: ONGR\ElasticsearchBundle\Mapping\DocumentParser
         arguments: ["@annotations.cached_reader", "@es.document_finder"]
+        public: false
+
+    es.yaml_document_parser:
+        class: ONGR\ElasticsearchBundle\Mapping\Yaml\DocumentParser
         public: false
 
     es.metadata_collector:
@@ -35,6 +44,10 @@ services:
         arguments: ["@es.document_finder", "@es.document_parser", "@es.cache_engine"]
         calls:
             - [setEnableCache, ["%es.cache%"]]
+
+    es.yaml_metadata_collector:
+        class: ONGR\ElasticsearchBundle\Mapping\Yaml\MetadataCollector
+        arguments: ["@es.yaml_document_finder", "@es.yaml_document_parser"]
 
     es.logger.collection_handler:
         class: ONGR\ElasticsearchBundle\Profiler\Handler\CollectionHandler

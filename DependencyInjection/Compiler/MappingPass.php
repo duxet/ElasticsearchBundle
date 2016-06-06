@@ -32,6 +32,7 @@ class MappingPass implements CompilerPassInterface
         $managers = $container->getParameter('es.managers');
 
         $collector = $container->get('es.metadata_collector');
+        $yamlCollector = $container->get('es.yaml_metadata_collector');
 
         foreach ($managers as $managerName => $manager) {
             if (!isset($connections[$manager['connection']])) {
@@ -67,6 +68,7 @@ class MappingPass implements CompilerPassInterface
             }
 
             $mappings = $collector->getMappings($manager['mappings']);
+            $mappings += $yamlCollector->getMappings($manager['mappings']);
 
             // Building repository services.
             foreach ($mappings as $repositoryType => $repositoryDetails) {

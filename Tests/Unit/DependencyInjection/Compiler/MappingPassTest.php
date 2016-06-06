@@ -28,6 +28,10 @@ class MappingPassTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $yamlMetadataCollectorMock = $this->getMockBuilder('ONGR\ElasticsearchBundle\Mapping\Yaml\MetadataCollector')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $metadataCollectorMock->expects($this->once())->method('getMappings')->willReturn(
             [
                 'product' => [
@@ -37,6 +41,10 @@ class MappingPassTest extends \PHPUnit_Framework_TestCase
                     'namespace' => 'Acme\BarBundle\Document\Foo',
                 ],
             ]
+        );
+
+        $yamlMetadataCollectorMock->expects($this->once())->method('getMappings')->willReturn(
+            []
         );
 
         $connections = [
@@ -78,13 +86,15 @@ class MappingPassTest extends \PHPUnit_Framework_TestCase
                 )
             );
 
-        $containerMock->expects($this->once())->method('get')->with($this->anything())
+        $containerMock->expects($this->exactly(2))->method('get')->with($this->anything())
             ->will(
                 $this->returnCallback(
-                    function ($parameter) use ($metadataCollectorMock) {
+                    function ($parameter) use ($metadataCollectorMock, $yamlMetadataCollectorMock) {
                         switch ($parameter) {
                             case 'es.metadata_collector':
                                 return $metadataCollectorMock;
+                            case 'es.yaml_metadata_collector':
+                                return $yamlMetadataCollectorMock;
                             default:
                                 return null;
                         }
@@ -129,7 +139,12 @@ class MappingPassTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $yamlMetadataCollectorMock = $this->getMockBuilder('ONGR\ElasticsearchBundle\Mapping\Yaml\MetadataCollector')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $container->set('es.metadata_collector', $metadataCollectorMock);
+        $container->set('es.yaml_metadata_collector', $yamlMetadataCollectorMock);
 
         $compilerPass = new MappingPass();
         $compilerPass->process($container);
