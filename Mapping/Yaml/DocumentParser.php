@@ -173,6 +173,10 @@ class DocumentParser
             $property = $reflectionClass->getProperty($name);
 
             if ($type !== null) {
+                if (!isset($type->name)) {
+                    $type->name = Caser::snake($name);
+                }
+
                 $alias[$type->name] = [
                     'propertyName' => $name,
                 ];
