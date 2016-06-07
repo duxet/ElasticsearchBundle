@@ -42,6 +42,7 @@ class ONGRElasticsearchExtension extends Extension
             'ONGR\ElasticsearchBundle\Service\ManagerFactory',
             [
                 new Reference('es.metadata_collector'),
+                new Reference('es.yaml_metadata_collector'),
                 new Reference('es.result_converter'),
                 $container->getParameter('kernel.debug') ? new Reference('es.tracer') : null,
             ]
