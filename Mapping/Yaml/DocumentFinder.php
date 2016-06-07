@@ -27,6 +27,25 @@ class DocumentFinder
     }
 
     /**
+     * Formats namespace from short syntax.
+     *
+     * @param string $namespace
+     *
+     * @return string
+     */
+    public function getNamespace($namespace)
+    {
+        if (strpos($namespace, ':') !== false) {
+            list($bundle, $document) = explode(':', $namespace);
+            $bundle = $this->getBundleClass($bundle);
+            $namespace = substr($bundle, 0, strrpos($bundle, '\\')) . '\\' .
+                self::DOCUMENT_DIR . '\\' . $document;
+        }
+
+        return $namespace;
+    }
+
+    /**
      * Returns bundle class namespace else throws an exception.
      *
      * @param string $name

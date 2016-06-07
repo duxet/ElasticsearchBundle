@@ -37,6 +37,7 @@ services:
 
     es.yaml_document_parser:
         class: ONGR\ElasticsearchBundle\Mapping\Yaml\DocumentParser
+        arguments: ["@es.yaml_document_finder"]
         public: false
 
     es.metadata_collector:

@@ -3,11 +3,17 @@
 namespace ONGR\ElasticsearchBundle\Mapping\Yaml;
 
 use ONGR\ElasticsearchBundle\Annotation\Embedded;
+use ONGR\ElasticsearchBundle\Annotation\Property;
 use ONGR\ElasticsearchBundle\Mapping\Caser;
 use ONGR\ElasticsearchBundle\Mapping\Exception\DocumentParserException;
 
 class DocumentParser
 {
+    /**
+     * @var DocumentFinder Used to find documents.
+     */
+    private $finder;
+
     /**
      * @var array Contains gathered objects which later adds to documents.
      */
@@ -22,6 +28,14 @@ class DocumentParser
      * @var array Local cache for document properties.
      */
     private $properties = [];
+
+    /**
+     * @param DocumentFinder $finder Used for resolving namespaces.
+     */
+    public function __construct(DocumentFinder $finder)
+    {
+        $this->finder = $finder;
+    }
 
     /**
      * Parses documents by used annotations and returns mapping for elasticsearch with some extra metadata.
@@ -100,7 +114,6 @@ class DocumentParser
      */
     private function getMetaFieldAnnotationData($property)
     {
-        /** @var MetaField $annotation */
         $annotation = $this->reader->getPropertyAnnotation($property, self::ID_ANNOTATION);
         $annotation = $annotation ?: $this->reader->getPropertyAnnotation($property, self::PARENT_ANNOTATION);
         $annotation = $annotation ?: $this->reader->getPropertyAnnotation($property, self::TTL_ANNOTATION);
@@ -276,7 +289,6 @@ class DocumentParser
     {
         $namespace = $this->finder->getNamespace($document);
         $reflectionClass = new \ReflectionClass($namespace);
-        $document = $this->getDocumentAnnotationData($reflectionClass);
 
         return empty($document->type) ? $reflectionClass->getShortName() : $document->type;
     }
