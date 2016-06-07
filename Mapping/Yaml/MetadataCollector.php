@@ -145,4 +145,16 @@ class MetadataCollector
 
         return $typesMapping;
     }
+
+    /**
+     * Returns fully qualified class name.
+     *
+     * @param string $className
+     *
+     * @return string
+     */
+    public function getClassName($className)
+    {
+        return $this->finder->getNamespace($className);
+    }
 }
