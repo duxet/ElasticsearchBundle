@@ -39,7 +39,7 @@ class DocumentFinder
             list($bundle, $document) = explode(':', $namespace);
             $bundle = $this->getBundleClass($bundle);
             $namespace = substr($bundle, 0, strrpos($bundle, '\\')) . '\\' .
-                self::DOCUMENT_DIR . '\\' . $document;
+                'Model' . '\\' . $document;
         }
 
         return $namespace;
