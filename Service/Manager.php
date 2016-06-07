@@ -94,12 +94,13 @@ class Manager
     private $repositories;
 
     /**
-     * @param string            $name              Manager name
-     * @param array             $config            Manager configuration
-     * @param Client            $client
-     * @param array             $indexSettings
+     * @param string $name Manager name
+     * @param array $config Manager configuration
+     * @param Client $client
+     * @param array $indexSettings
      * @param MetadataCollector $metadataCollector
-     * @param Converter         $converter
+     * @param \ONGR\ElasticsearchBundle\Mapping\Yaml\MetadataCollector $yamlMetadataCollector
+     * @param Converter $converter
      */
     public function __construct(
         $name,
@@ -107,6 +108,7 @@ class Manager
         $client,
         array $indexSettings,
         $metadataCollector,
+        $yamlMetadataCollector,
         $converter
     ) {
         $this->name = $name;
@@ -114,6 +116,7 @@ class Manager
         $this->client = $client;
         $this->indexSettings = $indexSettings;
         $this->metadataCollector = $metadataCollector;
+        $this->yamlMetadataCollector = $yamlMetadataCollector;
         $this->converter = $converter;
     }
 
@@ -158,6 +161,10 @@ class Manager
 
         $namespace = $this->getMetadataCollector()->getClassName($className);
 
+        if (!class_exists($namespace)) {
+            $namespace = $this->getYamlMetadataCollector()->getClassName($className);
+        }
+
         if (isset($this->repositories[$namespace])) {
             return $this->repositories[$namespace];
         }
@@ -174,6 +181,11 @@ class Manager
     public function getMetadataCollector()
     {
         return $this->metadataCollector;
+    }
+
+    public function getYamlMetadataCollector()
+    {
+        return $this->yamlMetadataCollector;
     }
 
     /**

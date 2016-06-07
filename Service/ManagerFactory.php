@@ -27,6 +27,11 @@ class ManagerFactory
     private $metadataCollector;
 
     /**
+     * @var \ONGR\ElasticsearchBundle\Mapping\Yaml\MetadataCollector
+     */
+    private $yamlMetadataCollector;
+
+    /**
      * @var Converter
      */
     private $converter;
@@ -43,13 +48,21 @@ class ManagerFactory
 
     /**
      * @param MetadataCollector $metadataCollector Metadata collector service.
-     * @param Converter         $converter         Converter service to transform arrays to objects and visa versa.
-     * @param LoggerInterface   $tracer
-     * @param LoggerInterface   $logger
+     * @param $yamlMetadataCollector
+     * @param Converter $converter Converter service to transform arrays to objects and visa versa.
+     * @param LoggerInterface $tracer
+     * @param LoggerInterface $logger
      */
-    public function __construct($metadataCollector, $converter, $tracer = null, $logger = null)
+    public function __construct(
+        $metadataCollector,
+        $yamlMetadataCollector,
+        $converter,
+        $tracer = null,
+        $logger = null
+    )
     {
         $this->metadataCollector = $metadataCollector;
+        $this->yamlMetadataCollector = $yamlMetadataCollector;
         $this->converter = $converter;
         $this->tracer = $tracer;
         $this->logger = $logger;
@@ -108,6 +121,7 @@ class ManagerFactory
             $client->build(),
             $indexSettings,
             $this->metadataCollector,
+            $this->yamlMetadataCollector,
             $this->converter
         );
 
